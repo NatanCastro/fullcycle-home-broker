@@ -6,16 +6,16 @@ import (
 )
 
 type Book struct {
-	Orders        []*Order
+	Order         []*Order
 	Transactions  []*Transaction
-	OrdersChan    chan *Order
+	OrdersChan    chan *Order // input
 	OrdersChanOut chan *Order
 	Wg            *sync.WaitGroup
 }
 
-func NewBook(orderChan, orderChanOut chan *Order, wg *sync.WaitGroup) *Book {
+func NewBook(orderChan chan *Order, orderChanOut chan *Order, wg *sync.WaitGroup) *Book {
 	return &Book{
-		Orders:        []*Order{},
+		Order:         []*Order{},
 		Transactions:  []*Transaction{},
 		OrdersChan:    orderChan,
 		OrdersChanOut: orderChanOut,
@@ -37,7 +37,7 @@ func (b *Book) Trade() {
 
 		if buyOrders[asset] == nil {
 			buyOrders[asset] = NewOrderQueue()
-			heap.Init(sellOrders[asset])
+			heap.Init(buyOrders[asset])
 		}
 
 		if sellOrders[asset] == nil {
